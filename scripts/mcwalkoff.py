@@ -12,7 +12,7 @@
 纯本地计算，不依赖网络。正式 Skill 运行时应改用麦当劳 MCP：
   - list-nutrition-foods 取实时卡路里
   - query-nearby-stores 取带 distance(米) 的门店
-详见仓库根目录 MCP_INTEGRATION.md 与 skill/skill.md。
+详见仓库根目录 MCP_INTEGRATION.md 与 SKILL.md。
 
 用法示例：
   python mcwalkoff.py --demo
