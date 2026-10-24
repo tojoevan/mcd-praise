@@ -28,7 +28,11 @@ author: tojoevan
 （用户也可指定任意单品/组合，仍用 `list-nutrition-foods` 取真实 `energyKcal` 累加）
 
 ## 单一趣味玩法（一次爽完，不拆模式）
-1. 拿到用户**城市 + 位置**（如"上海人民广场"）。没给就问一句，别硬猜。
+1. 确定用户**城市 + 位置**（如"上海人民广场"）：
+   - 用户给了（如"南京新街口"）→ 直接用。
+   - 用户没给 → 先尝试**自动定位兜底**：运行 `python3 scripts/mcwalkoff.py --locate`（脚本用 IP 定位返回城市级位置，如"南京"），或让 agent 用 WebFetch 访问 `https://ipapi.co/json/` 取 `city` 字段。
+   - 定位失败 / 无网络 → 回退默认城市 **上海·人民广场**，并在输出开头注明「⚠️ 未拿到你的定位，已用默认城市演示」。
+   - 拿到城市后，`keyword` 默认用该城中心商圈（上海→人民广场、南京→新街口、北京→国贸），也可以城市名直接搜。
 2. 调 `query-nearby-stores`(beType=1, searchType=2, city, keyword) 取带 `distance`(米) 的门店，挑**最近 3 家**。
 3. 调 `list-nutrition-foods` 取真实 `energyKcal`，挑 **1–3 个主推套餐**（用上面的招牌组合，或用户指定）。
 4. 算走路消耗：最近店 d 米 → 来回 2d → 走路kcal = 体重 × (2d/1000) × K。

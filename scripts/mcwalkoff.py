@@ -23,10 +23,14 @@ import argparse
 import json
 import math
 import os
+import re
 import sys
+import urllib.request
+import urllib.error
 
 DEFAULT_WEIGHT = 60.0       # kg
 DEFAULT_K = 0.75            # kcal/(kg·km)
+DEFAULT_CITY = "上海"       # 定位失败时的兜底城市
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 NUTRITION_PATH = os.path.join(HERE, "nutrition.json")
@@ -52,6 +56,41 @@ SIGNATURE_COMBOS = [
 def load_nutrition():
     with open(NUTRITION_PATH, "r", encoding="utf-8") as f:
         return {it["name"]: it["kcal"] for it in json.load(f)["items"]}
+
+
+# IP 定位：返回城市级位置（中文城市名）。仅到城市级、可能不准，失败回退默认城市。
+_CITY_MAP = {
+    "shanghai": "上海", "beijing": "北京", "nanjing": "南京",
+    "shenzhen": "深圳", "guangzhou": "广州", "hangzhou": "杭州",
+    "chengdu": "成都", "wuhan": "武汉", "xian": "西安", "tianjin": "天津",
+    "chongqing": "重庆", "suzhou": "苏州", "shenyang": "沈阳",
+    "jinan": "济南", "qingdao": "青岛", "dalian": "大连", "xiamen": "厦门",
+    "changsha": "长沙", "zhengzhou": "郑州", "hefei": "合肥", "kunming": "昆明",
+    "fuzhou": "福州", "nanchang": "南昌", "lanzhou": "兰州", "taiyuan": "太原",
+    "wuxi": "无锡", "ningbo": "宁波", "wenzhou": "温州", "dongguan": "东莞",
+}
+
+
+def locate_city():
+    """用 IP 定位返回城市级位置（中文城市名）。失败/超时回退 DEFAULT_CITY。"""
+    try:
+        req = urllib.request.Request(
+            "https://ipapi.co/json/",
+            headers={"User-Agent": "mcwalkoff/1.0"},
+        )
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        city = (data.get("city") or "").strip()
+        if not city:
+            return DEFAULT_CITY
+        low = city.lower()
+        if low in _CITY_MAP:
+            return _CITY_MAP[low]
+        if re.search(r"[一-鿿]", city):   # 已经是中文城市名
+            return city
+        return DEFAULT_CITY
+    except Exception:
+        return DEFAULT_CITY
 
 
 def combo_kcal(parts, table):
@@ -136,7 +175,13 @@ def main():
     p.add_argument("--weight", type=float, default=DEFAULT_WEIGHT, help="体重 kg，默认 60")
     p.add_argument("--k", type=float, default=DEFAULT_K, help="系数 K kcal/(kg·km)，默认 0.75")
     p.add_argument("--demo", action="store_true", help="运行内置示例（上海·人民广场真实快照）")
+    p.add_argument("--locate", action="store_true",
+                   help="仅输出 IP 定位得到的城市名（用于 Skill 自动定位兜底）")
     args = p.parse_args()
+
+    if args.locate:
+        print(locate_city())
+        return
 
     NUTRITION = load_nutrition()
     stores = [s.strip() for s in args.stores.split(",") if s.strip()]
