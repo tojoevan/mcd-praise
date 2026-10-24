@@ -1,5 +1,6 @@
 ---
-name: 麦麦夸我好身材 (McPraise)
+name: mcd-praise
+display_name: 麦麦夸我好身材
 description: 趣味夸张的麦当劳卡路里"补作业"助手。基于麦当劳 MCP 真实门店距离（query-nearby-stores）与餐品热量（list-nutrition-foods），先炫耀门店近到离谱，再亮出主推套餐热量，算出你为了吃这顿走了多少路、消耗了几个卡，最后甩出一组撸铁动作让你"补作业"。当用户说"附近麦当劳""想吃麦当劳""麦当劳套餐热量""吃麦当劳会不会胖"等时使用。
 ---
 

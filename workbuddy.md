@@ -27,3 +27,9 @@
 ## 合规性
 - 项目未包含任何真实 Token / 密钥，配置仅用 `${MCD_MCP_TOKEN}` 占位符。
 - 输出明确标注"非官方产品、不构成专业建议"。
+
+## 项目最终改名（第三版）
+6. **最终改名**：用户将项目名由「麦麦健身」(McFit) 改为 **「麦麦夸我好身材」(McPraise)**。
+   - 本地目录 `mcd-fitness` → `mcd-praise`；所有文件显示名、英文副标题、README 目录树同步替换（CONTEST_DECLARATION.md 未触碰）。
+   - GitHub 仓库 `tojoevan/mcd-fitness` 重命名为 `tojoevan/mcd-praise`，本地重建 git 后 force push 覆盖远程旧版本；仓库描述同步更新。
+   - 报名 Issue #1217 标题与正文（项目名称、项目地址）同步更新为「麦麦夸我好身材」/ `https://github.com/tojoevan/mcd-praise`。
